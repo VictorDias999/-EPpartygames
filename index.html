@@ -1,215 +1,259 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Trono das Sombras - MVP 1.0</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<style>
-body {
-    background-color: #1a1a1a;
-    color: white;
-    font-family: Arial, sans-serif;
-    text-align: center;
-    margin: 0;
-    padding: 20px;
-}
+    <title>Trono das Sombras</title>
 
-.container {
-    max-width: 800px;
-    margin: auto;
-}
+    <link rel="stylesheet" href="style.css">
 
-h1 {
-    color: gold;
-}
-
-.player-box {
-    border: 2px solid gold;
-    border-radius: 10px;
-    padding: 15px;
-    margin: 15px 0;
-}
-
-.actions {
-    margin-top: 20px;
-}
-
-button {
-    padding: 12px;
-    margin: 8px;
-    font-size: 16px;
-    cursor: pointer;
-    border: none;
-    border-radius: 6px;
-}
-
-button:hover {
-    opacity: 0.9;
-}
-
-.log {
-    margin-top: 20px;
-    border: 1px solid gray;
-    padding: 10px;
-    min-height: 180px;
-    text-align: left;
-    border-radius: 10px;
-}
-
-#log {
-    max-height: 250px;
-    overflow-y: auto;
-}
-</style>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 
 <body>
 
-<div class="container">
+    <!-- TELA INICIAL -->
+    <section id="menuScreen" class="screen active">
 
-    <h1>🏰 Trono das Sombras</h1>
+        <div class="menu-container">
 
-    <div class="player-box">
-        <h2>Você</h2>
-        <p>❤️ Vida: <span id="playerLife">3</span></p>
-        <p>🪙 Moedas: <span id="playerCoins">2</span></p>
+            <h1>🏰 Trono das Sombras</h1>
+
+            <p class="subtitle">
+                Um jogo de blefe, estratégia e intrigas medievais.
+            </p>
+
+            <button id="startBtn" class="main-btn">
+                Iniciar Partida
+            </button>
+
+        </div>
+
+    </section>
+
+    <!-- TELA PRINCIPAL -->
+    <section id="gameScreen" class="screen">
+
+        <!-- CABEÇALHO -->
+        <header class="top-bar">
+
+            <div class="player-panel">
+
+                <h2>👤 Jogador</h2>
+
+                <div class="status">
+                    <span id="playerLife">❤️ 3</span>
+                    <span id="playerCoins">🪙 2</span>
+                </div>
+
+            </div>
+
+            <div class="turn-display">
+                <h2 id="turnText">Seu Turno</h2>
+            </div>
+
+            <div class="player-panel">
+
+                <h2>🤖 IA</h2>
+
+                <div class="status">
+                    <span id="aiLife">❤️ 3</span>
+                    <span id="aiCoins">🪙 2</span>
+                </div>
+
+            </div>
+
+        </header>
+
+        <!-- ÁREA DA IA -->
+        <section class="board-section">
+
+            <h3>Cartas da IA</h3>
+
+            <div id="aiCards" class="cards-container">
+
+                <div class="card back-card"></div>
+                <div class="card back-card"></div>
+
+            </div>
+
+        </section>
+
+        <!-- TABULEIRO -->
+        <section class="battlefield">
+
+            <div id="battleMessage">
+                A batalha pelo trono começou.
+            </div>
+
+        </section>
+
+        <!-- CARTAS DO JOGADOR -->
+        <section class="board-section">
+
+            <h3>Suas Cartas</h3>
+
+            <div id="playerCards" class="cards-container">
+
+            </div>
+
+        </section>
+
+        <!-- AÇÕES -->
+        <section class="actions-panel">
+
+            <h3>Ações</h3>
+
+            <div class="actions-grid">
+
+                <button class="action-btn" data-card="Cavaleiro">
+                    ⚔️ Cavaleiro
+                </button>
+
+                <button class="action-btn" data-card="Guarda">
+                    🛡️ Guarda Real
+                </button>
+
+                <button class="action-btn" data-card="Mago">
+                    🧙 Mago
+                </button>
+
+                <button class="action-btn" data-card="Rei">
+                    👑 Rei
+                </button>
+
+                <button class="action-btn" data-card="Assassino">
+                    🗡️ Assassino
+                </button>
+
+                <button class="action-btn" data-card="Comerciante">
+                    💰 Comerciante
+                </button>
+
+            </div>
+
+        </section>
+
+        <!-- LOG -->
+        <section class="log-panel">
+
+            <h3>Registro da Partida</h3>
+
+            <div id="gameLog">
+
+            </div>
+
+        </section>
+
+    </section>
+
+    <!-- MODAL DE DECLARAÇÃO -->
+    <div id="declareModal" class="modal hidden">
+
+        <div class="modal-content">
+
+            <h2>Declarar Carta</h2>
+
+            <p>
+                Escolha qual carta deseja declarar para usar a habilidade.
+            </p>
+
+            <select id="declaredCard">
+
+                <option value="Cavaleiro">⚔️ Cavaleiro</option>
+                <option value="Guarda">🛡️ Guarda Real</option>
+                <option value="Mago">🧙 Mago</option>
+                <option value="Rei">👑 Rei</option>
+                <option value="Assassino">🗡️ Assassino</option>
+                <option value="Comerciante">💰 Comerciante</option>
+
+            </select>
+
+            <div class="modal-buttons">
+
+                <button id="confirmAction">
+                    Confirmar
+                </button>
+
+                <button id="cancelAction">
+                    Cancelar
+                </button>
+
+            </div>
+
+        </div>
+
     </div>
 
-    <div class="player-box">
-        <h2>IA</h2>
-        <p>❤️ Vida: <span id="aiLife">3</span></p>
-        <p>🪙 Moedas: <span id="aiCoins">2</span></p>
+    <!-- MODAL DESAFIO -->
+    <div id="challengeModal" class="modal hidden">
+
+        <div class="modal-content">
+
+            <h2>⚠️ Desafio</h2>
+
+            <p id="challengeText">
+                Deseja desafiar?
+            </p>
+
+            <div class="modal-buttons">
+
+                <button id="challengeYes">
+                    Desafiar
+                </button>
+
+                <button id="challengeNo">
+                    Aceitar
+                </button>
+
+            </div>
+
+        </div>
+
     </div>
 
-    <div class="actions">
-        <button onclick="comerciante()">
-            💰 Comerciante (+3 moedas)
-        </button>
+    <!-- MODAL MAGO -->
+    <div id="mageModal" class="modal hidden">
 
-        <button onclick="cavaleiro()">
-            ⚔️ Cavaleiro (3 moedas)
-        </button>
+        <div class="modal-content">
+
+            <h2>🔮 Visão do Mago</h2>
+
+            <p id="revealedCard">
+                Carta revelada
+            </p>
+
+            <button id="closeMageModal">
+                Fechar
+            </button>
+
+        </div>
+
     </div>
 
-    <div class="log">
-        <h3>Registro da Partida</h3>
-        <div id="log"></div>
+    <!-- MODAL VITÓRIA -->
+    <div id="victoryModal" class="modal hidden">
+
+        <div class="modal-content victory">
+
+            <h1 id="victoryTitle">
+                Vitória
+            </h1>
+
+            <p id="victoryText">
+                Resultado da partida.
+            </p>
+
+            <button onclick="location.reload()">
+                Jogar Novamente
+            </button>
+
+        </div>
+
     </div>
 
-</div>
-
-<script>
-
-let playerLife = 3;
-let aiLife = 3;
-
-let playerCoins = 2;
-let aiCoins = 2;
-
-function updateUI() {
-
-    document.getElementById("playerLife").textContent = playerLife;
-    document.getElementById("aiLife").textContent = aiLife;
-
-    document.getElementById("playerCoins").textContent = playerCoins;
-    document.getElementById("aiCoins").textContent = aiCoins;
-}
-
-function addLog(text) {
-
-    const log = document.getElementById("log");
-
-    log.innerHTML += text + "<br>";
-
-    log.scrollTop = log.scrollHeight;
-}
-
-function comerciante() {
-
-    playerCoins += 3;
-
-    addLog("💰 Você usou Comerciante e ganhou 3 moedas.");
-
-    endTurn();
-}
-
-function cavaleiro() {
-
-    if (playerCoins < 3) {
-
-        addLog("❌ Você não possui moedas suficientes.");
-
-        return;
-    }
-
-    playerCoins -= 3;
-
-    aiLife--;
-
-    addLog("⚔️ Você usou Cavaleiro e causou 1 de dano.");
-
-    checkVictory();
-
-    if (aiLife > 0) {
-        endTurn();
-    }
-}
-
-function endTurn() {
-
-    playerCoins += 2;
-
-    aiTurn();
-
-    updateUI();
-}
-
-function aiTurn() {
-
-    aiCoins += 2;
-
-    if (aiCoins >= 3) {
-
-        aiCoins -= 3;
-
-        playerLife--;
-
-        addLog("⚔️ A IA usou Cavaleiro e causou 1 de dano.");
-
-    }
-    else {
-
-        aiCoins += 3;
-
-        addLog("💰 A IA usou Comerciante.");
-    }
-
-    checkVictory();
-}
-
-function checkVictory() {
-
-    if (playerLife <= 0) {
-
-        alert("💀 Você perdeu!");
-
-        location.reload();
-    }
-
-    if (aiLife <= 0) {
-
-        alert("🏆 Você venceu!");
-
-        location.reload();
-    }
-
-    updateUI();
-}
-
-updateUI();
-
-</script>
+    <script src="script.js"></script>
 
 </body>
 </html>
