@@ -2,7 +2,16 @@
 // TRONO DAS SOMBRAS
 // SCRIPT.JS
 // ========================================
+window.onerror = function(msg, url, line){
 
+    alert(
+        "Erro JS: " +
+        msg +
+        " Linha: " +
+        line
+    );
+
+};
 // ------------------------
 // CARTAS
 // ------------------------
@@ -106,9 +115,44 @@ class Jogador {
 // INICIAR
 // ------------------------
 
-document
-.getElementById("startBtn")
-.addEventListener("click", iniciarPartida);
+window.addEventListener("DOMContentLoaded", () => {
+
+    console.log("Script carregado!");
+
+    const startBtn = document.getElementById("startBtn");
+
+    if(startBtn){
+
+        startBtn.addEventListener(
+            "click",
+            iniciarPartida
+        );
+
+        console.log("Botão conectado.");
+    }
+
+    const closeMageBtn =
+        document.getElementById(
+            "closeMageModal"
+        );
+
+    if(closeMageBtn){
+
+        closeMageBtn.addEventListener(
+            "click",
+            () => {
+
+                document
+                    .getElementById(
+                        "mageModal"
+                    )
+                    .classList
+                    .add("hidden");
+            }
+        );
+    }
+
+});
 
 function iniciarPartida(){
 
@@ -553,22 +597,6 @@ function usarMago(){
     );
 }
 
-document
-.getElementById(
-    "closeMageModal"
-)
-.addEventListener(
-    "click",
-    ()=>{
-
-        document
-            .getElementById(
-                "mageModal"
-            )
-            .classList
-            .add("hidden");
-    }
-);
 
 // ========================================
 // ASSASSINO
