@@ -1,5 +1,6 @@
 // ========================================
 // TRONO DAS SOMBRAS - SCRIPT.JS (ATUALIZADO)
+// Tema Medieval Premium - Com Ações Universais
 // ========================================
 window.onerror = function(msg, url, line){
     alert("Erro JS: " + msg + " Linha: " + line);
@@ -145,14 +146,46 @@ function log(texto){
 }
 
 // ------------------------
-// BOTÕES DE AÇÃO
+// BOTÕES DE AÇÃO (ATUALIZADO)
 // ------------------------
 document.querySelectorAll(".action-btn").forEach(botao => {
     botao.addEventListener("click", () => {
-        const carta = botao.dataset.card;
-        usarAcao(carta);
+        if(!turnoJogador) return;
+
+        // Gerencia as novas Ações Universais (sem necessidade de cartas/blefes)
+        if(botao.dataset.universal) {
+            const acaoUniversal = botao.dataset.universal;
+            executarAcaoUniversalJogador(acaoUniversal);
+        } else {
+            // Ações padrões de cartas
+            const carta = botao.dataset.card;
+            usarAcao(carta);
+        }
     });
 });
+
+// --- LÓGICA DAS AÇÕES UNIVERSAIS ---
+function executarAcaoUniversalJogador(acao) {
+    if(acao === "Taxar") {
+        jogador.moedas += 1;
+        log("🪙 AÇÃO UNIVERSAL: Você coletou 1 moeda de taxa do vilarejo (Ação segura, sem blefe).");
+        finalizarTurnoEstrutura();
+    } 
+    else if(acao === "Golpe") {
+        if(jogador.moedas < 7) {
+            log("❌ Moedas insuficientes para o Golpe Supremo. Requer 🪙 7.");
+            return;
+        }
+        if(ia.cartas.length === 0) return;
+
+        jogador.moedas -= 7;
+        ia.vida--;
+        ia.perderCarta(0); // Remove permanentemente a carta da IA
+        log("💥 GOLPE SUPREMO! Você pagou 7 moedas e desferiu um ataque indefensável. IA perdeu 1 vida e 1 carta!");
+        
+        finalizarTurnoEstrutura();
+    }
+}
 
 function usarAcao(nomeCarta){
     if(!turnoJogador) return;
@@ -208,7 +241,7 @@ function resolverJogadaJogador(carta, desafia){
             executarPoderJogador(carta);
         } else {
             jogador.vida--;
-            log("❌ Seu blefe foi descoberto! Você perdeu 1 vida.");
+            log("❌ Seu blefe foi descobri! Você perdeu 1 vida.");
             if(jogador.cartas.length > 0) jogador.perderCarta(0);
             finalizarTurnoEstrutura();
         }
@@ -218,13 +251,13 @@ function resolverJogadaJogador(carta, desafia){
     }
 }
 
-function executarPoderJogador(carta){
+function ejecutarPoderJogador(carta){
     jogador.moedas -= CARTAS[carta].custo;
 
     if(carta === "Cavaleiro" || carta === "Assassino") {
         // Mecânica de Reação do Guarda pela IA
         let iaTemGuarda = ia.cartas.includes("Guarda");
-        let iaUsaGuarda = iaTemGuarda ? Math.random() < 0.85 : Math.random() < 0.30; // IA pode blefar o guarda
+        let iaUsaGuarda = iaTemGuarda ? Math.random() < 0.85 : Math.random() < 0.30; 
 
         if(iaUsaGuarda) {
             log(`🛡️ REAÇÃO: A IA declarou ter um Guarda para bloquear seu ${carta}!`);
@@ -248,7 +281,6 @@ function executarPoderJogador(carta){
             aplicarEfeitoAtaqueJogador(carta);
         }
     } else {
-        // Outros poderes
         if(carta === "Comerciante") {
             jogador.moedas += 3;
             log("💰 Você recebeu 3 moedas do Comerciante.");
@@ -270,7 +302,7 @@ function aplicarEfeitoAtaqueJogador(tipoAtaque) {
         log("⚔️ Cavaleiro desferiu um golpe! IA perdeu 1 vida.");
     } else if(tipoAtaque === "Assassino") {
         ia.vida--;
-        ia.perderCarta(0); // REMOVE A CARTA DE FATO
+        ia.perderCarta(0); 
         log("🗡️ O Assassino eliminou com sucesso uma das cartas da IA.");
     }
 }
@@ -288,7 +320,6 @@ function usarRei(){
 
     const indiceIA = Math.floor(Math.random() * ia.cartas.length);
     
-    // TROCA REAL DE CARTAS NO ARRAY
     let cartaJogador = jogador.cartas[cartaSelecionada];
     let cartaIA = ia.cartas[indiceIA];
 
@@ -306,7 +337,7 @@ function finalizarTurnoEstrutura() {
 }
 
 // ------------------------
-// FLUXO DE TURNOS
+// FLUXO DE TURNOS (ATUALIZADO PARA IA CONHECER AS NOVAS AÇÕES)
 // ------------------------
 function passarTurno(){
     turnoJogador = false;
@@ -318,15 +349,37 @@ function turnoIA(){
     if(ia.vida <= 0) return;
     
     ia.moedas += 2; 
-    const opcoes = Object.keys(CARTAS).filter(c => c !== "Guarda"); // Guarda não é ação de turno
+    
+    // Prioridade Absoluta da IA: Se tiver moedas para o Golpe Supremo, ela joga sem hesitar
+    if(ia.moedas >= 7) {
+        ia.moedas -= 7;
+        jogador.vida--;
+        jogador.perderCarta(0); // Elimina uma carta sua sem direito a resposta
+        log("💥 🤖 IA DESFERIU UM GOLPE SUPREMO! Ataque indefensável: você perdeu 1 vida e 1 carta.");
+        
+        atualizarStatus();
+        verificarVitoria();
+        if(jogador.vida > 0 && ia.vida > 0) passarParaProximoTurnoJogador();
+        return;
+    }
+
+    let chance = Math.random();
     let declarada;
 
-    if(ia.moedas >= 4 && Math.random() < 0.7){
+    // Decisão de jogada inteligente baseada em moedas e probabilidades
+    if(ia.moedas >= 4 && chance < 0.4){
         declarada = "Assassino";
-    } else if(ia.moedas >= 3 && Math.random() < 0.5){
+    } else if(ia.moedas >= 3 && chance < 0.7){
         declarada = "Cavaleiro";
+    } else if(chance < 0.85) {
+        declarada = "Comerciante";
     } else {
-        declarada = Math.random() < 0.6 ? "Comerciante" : "Rei";
+        // IA escolhe usar a ação universal de coletar taxa básica (+1 moeda segura)
+        ia.moedas += 1;
+        log("🪙 🤖 IA usou a Ação Universal: Coletar Taxa (+1 moeda de forma segura).");
+        atualizarStatus();
+        passarParaProximoTurnoJogador();
+        return;
     }
 
     log(`🤖 IA declarou agir com: ${declarada}`);
@@ -345,7 +398,7 @@ function resolverJogadaIA(carta, desafiar){
             log("❌ A IA provou a verdade! Você perdeu o desafio e 1 vida.");
             jogador.vida--;
             if(jogador.cartas.length > 0) jogador.perderCarta(0);
-            executarPoderIA(carta);
+            ejecutarPoderIA(carta);
         } else {
             log("✅ Excelente! Pegou o blefe da IA. Ela perdeu 1 vida.");
             ia.vida--;
@@ -353,11 +406,11 @@ function resolverJogadaIA(carta, desafiar){
             passarParaProximoTurnoJogador();
         }
     } else {
-        executarPoderIA(carta);
+        ejecutarPoderIA(carta);
     }
 }
 
-function executarPoderIA(carta){
+function ejecutarPoderIA(carta){
     ia.moedas -= CARTAS[carta].custo;
 
     if(carta === "Cavaleiro" || carta === "Assassino") {
@@ -366,7 +419,7 @@ function executarPoderIA(carta){
         
         if(querReagir) {
             log("🛡️ Você declarou reação de Guarda!");
-            let iaDesafiaGuarda = Math.random() < 0.40; // IA decide se checa blefe do jogador
+            let iaDesafiaGuarda = Math.random() < 0.40; 
             let jogadorTemGuarda = jogador.cartas.includes("Guarda");
 
             if(iaDesafiaGuarda) {
@@ -416,7 +469,7 @@ function aplicarEfeitoAtaqueIA(tipoAtaque) {
         log("⚔️ O Cavaleiro da IA transpôs suas defesas. Você perdeu 1 vida.");
     } else if(tipoAtaque === "Assassino") {
         jogador.vida--;
-        jogador.perderCarta(0); // REMOVE A CARTA DE FATO
+        jogador.perderCarta(0); 
         log("🗡️ O Assassino da IA eliminou uma de suas cartas de jogo.");
     }
 }
