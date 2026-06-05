@@ -71,6 +71,9 @@ let turnoJogador = true;
 
 let cartaSelecionada = null;
 
+let guardaAtivo = false;
+let guardaJogadorAtivo = false;
+
 // ------------------------
 // CLASSE JOGADOR
 // ------------------------
@@ -236,6 +239,10 @@ function renderizarCartasJogador(){
                 ${dados.nome}
             </div>
 
+            <div class="card-cost">
+                🪙 ${dados.custo}
+            </div>
+
             <div class="card-icon">
                 ${dados.icone}
             </div>
@@ -342,6 +349,12 @@ function usarAcao(nomeCarta){
 
     if(!turnoJogador){
 
+        return;
+    }
+
+    if(nomeCarta === "Guarda"){
+        guardaJogadorAtivo = true;
+        log("🛡️ Guarda ativado! Você está protegido neste turno.");
         return;
     }
 
@@ -615,6 +628,13 @@ function usarAssassino(){
 
     jogador.moedas -= 4;
 
+    if(ia.cartas.length === 0){
+        log(
+            "❌ A IA não tem cartas para remover."
+        );
+        return;
+    }
+
     const indice =
         Math.floor(
             Math.random() *
@@ -643,8 +663,6 @@ function usarRei(){
         return;
     }
 
-    jogador.moedas -= 3;
-
     if(cartaSelecionada === null){
 
         log(
@@ -653,6 +671,15 @@ function usarRei(){
 
         return;
     }
+
+    if(ia.cartas.length === 0){
+        log(
+            "❌ A IA não tem cartas para trocar."
+        );
+        return;
+    }
+
+    jogador.moedas -= 3;
 
     const indiceIA =
         Math.floor(
@@ -669,6 +696,8 @@ function usarRei(){
     ia.cartas[indiceIA] =
         temp;
 
+    cartaSelecionada = null;
+
     log(
         "👑 Cartas trocadas."
     );
@@ -683,6 +712,8 @@ function usarRei(){
 function passarTurno(){
 
     turnoJogador = false;
+
+    guardaJogadorAtivo = false;
 
     document
         .getElementById(
@@ -701,20 +732,41 @@ function turnoIA(){
 
     ia.moedas += 2;
 
+    guardaAtivo = false;
+
     const cartas =
         Object.keys(CARTAS);
 
-    const declarada =
-        cartas[
-            Math.floor(
-                Math.random() *
-                cartas.length
-            )
-        ];
+    let declarada;
 
-    log(
-        `🤖 IA declarou ${declarada}`
-    );
+    // IA tem 30% de chance de usar Guarda
+    if(Math.random() < 0.3){
+        declarada = "Guarda";
+        guardaAtivo = true;
+        log(
+            `🤖 IA preparou um Guarda! Ela está protegida.`
+        );
+    }
+    else{
+        declarada =
+            cartas[
+                Math.floor(
+                    Math.random() *
+                    cartas.length
+                )
+            ];
+
+        log(
+            `🤖 IA declarou ${declarada}`
+        );
+    }
+
+    if(guardaAtivo){
+        setTimeout(()=>{
+            passarParaProximoTurnoJogador();
+        }, 1500);
+        return;
+    }
 
     setTimeout(()=>{
 
@@ -748,11 +800,19 @@ function resolverJogadaIA(
 
         if(possui){
 
-            jogador.vida--;
+            if(guardaJogadorAtivo){
+                log(
+                    "🛡️ Seu Guarda bloqueou o ataque!"
+                );
+                guardaJogadorAtivo = false;
+            }
+            else{
+                jogador.vida--;
 
-            log(
-                "❌ A IA tinha a carta."
-            );
+                log(
+                    "❌ A IA tinha a carta."
+                );
+            }
         }
         else{
 
@@ -774,7 +834,13 @@ function resolverJogadaIA(
 
     verificarVitoria();
 
+    passarParaProximoTurnoJogador();
+}
+
+function passarParaProximoTurnoJogador(){
     turnoJogador = true;
+
+    guardaAtivo = false;
 
     jogador.moedas += 2;
 
@@ -800,6 +866,10 @@ function executarPoderIA(
 
             ia.moedas += 3;
 
+            log(
+                "💰 IA recebeu 3 moedas."
+            );
+
             break;
 
         case "Cavaleiro":
@@ -808,23 +878,45 @@ function executarPoderIA(
 
                 ia.moedas -= 3;
 
-                jogador.vida--;
+                if(guardaJogadorAtivo){
+                    log(
+                        "🛡️ Seu Guarda bloqueou o ataque do Cavaleiro!"
+                    );
+                    guardaJogadorAtivo = false;
+                }
+                else{
+                    jogador.vida--;
+                    log(
+                        "⚔️ Cavaleiro da IA causou 1 dano."
+                    );
+                }
             }
 
             break;
 
         case "Assassino":
 
-            if(ia.moedas >= 4){
+            if(ia.moedas >= 4 && jogador.cartas.length > 0){
 
                 ia.moedas -= 4;
 
-                jogador.perderCarta(
-                    Math.floor(
-                        Math.random() *
-                        jogador.cartas.length
-                    )
-                );
+                if(guardaJogadorAtivo){
+                    log(
+                        "🛡️ Seu Guarda bloqueou o ataque do Assassino!"
+                    );
+                    guardaJogadorAtivo = false;
+                }
+                else{
+                    jogador.perderCarta(
+                        Math.floor(
+                            Math.random() *
+                            jogador.cartas.length
+                        )
+                    );
+                    log(
+                        "🗡️ A IA removeu uma carta sua."
+                    );
+                }
             }
 
             break;

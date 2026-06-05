@@ -257,29 +257,40 @@ body{
 
     text-align:center;
 
-    margin-top:15px;
+    margin-top:10px;
 
     color:var(--gold);
 
-    font-size:1rem;
+    font-size:0.9rem;
+}
+
+.card-cost{
+
+    text-align:center;
+
+    font-size:0.8rem;
+
+    color:var(--gold-light);
+
+    font-weight:bold;
 }
 
 .card-icon{
 
-    font-size:4rem;
+    font-size:3.5rem;
 
     text-align:center;
 
-    margin-top:25px;
+    margin-top:10px;
 }
 
 .card-desc{
 
-    padding:12px;
+    padding:8px;
 
     text-align:center;
 
-    font-size:.85rem;
+    font-size:.75rem;
 }
 
 .back-card{
@@ -676,6 +687,6 @@ body{
     }
 
     .card-icon{
-        font-size:3rem;
+        font-size:2.5rem;
     }
 }
