@@ -7,46 +7,32 @@
     <title>Trono das Sombras</title>
 
     <link rel="stylesheet" href="style.css">
-
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 
 <body>
 
-    <!-- TELA INICIAL -->
     <section id="menuScreen" class="screen active">
-
         <div class="menu-container">
-
             <h1>🏰 Trono das Sombras</h1>
-
             <p class="subtitle">
                 Um jogo de blefe, estratégia e intrigas medievais.
             </p>
-
             <button id="startBtn" class="main-btn">
                 Iniciar Partida
             </button>
-
         </div>
-
     </section>
 
-    <!-- TELA PRINCIPAL -->
     <section id="gameScreen" class="screen">
 
-        <!-- CABEÇALHO -->
         <header class="top-bar">
-
             <div class="player-panel">
-
                 <h2>👤 Jogador</h2>
-
                 <div class="status">
                     <span id="playerLife">❤️ 3</span>
                     <span id="playerCoins">🪙 2</span>
                 </div>
-
             </div>
 
             <div class="turn-display">
@@ -54,53 +40,34 @@
             </div>
 
             <div class="player-panel">
-
                 <h2>🤖 IA</h2>
-
                 <div class="status">
                     <span id="aiLife">❤️ 3</span>
                     <span id="aiCoins">🪙 2</span>
                 </div>
-
             </div>
-
         </header>
 
-        <!-- ÁREA DA IA -->
         <section class="board-section">
-
             <h3>Cartas da IA</h3>
-
             <div id="aiCards" class="cards-container">
-
                 <div class="card back-card"></div>
                 <div class="card back-card"></div>
-
             </div>
-
         </section>
 
-        <!-- TABULEIRO -->
         <section class="battlefield">
-
             <div id="battleMessage">
                 A batalha pelo trono começou.
             </div>
-
         </section>
 
-        <!-- CARTAS DO JOGADOR -->
         <section class="board-section">
-
             <h3>Suas Cartas</h3>
-
             <div id="playerCards" class="cards-container">
-
             </div>
-
         </section>
 
-        <!-- AÇÕES -->
         <section class="actions-panel">
             <h3>Ações de Cartas (Podem ser Desafiadas)</h3>
             <div class="actions-grid" style="margin-bottom: 20px;">
@@ -118,84 +85,55 @@
             </div>
         </section>
 
-        <!-- LOG -->
         <section class="log-panel">
-
             <h3>Registro da Partida</h3>
-
             <div id="gameLog">
-
             </div>
-
         </section>
 
     </section>
 
-    <!-- MODAL DESAFIO -->
     <div id="challengeModal" class="modal hidden">
-
         <div class="modal-content">
-
             <h2>⚠️ Desafio</h2>
-
             <p id="challengeText">
                 Deseja desafiar?
             </p>
-
             <div class="modal-buttons">
-
                 <button id="challengeYes">
                     Desafiar
                 </button>
-
                 <button id="challengeNo">
                     Aceitar
                 </button>
-
             </div>
-
         </div>
-
     </div>
 
-    <!-- MODAL MAGO -->
     <div id="mageModal" class="modal hidden">
-
         <div class="modal-content">
-
             <h2>🔮 Visão do Mago</h2>
-
             <p id="revealedCard">
                 Carta revelada
             </p>
-
             <button id="closeMageModal">
                 Fechar
             </button>
-
         </div>
-
     </div>
 
-    <!-- MODAL VITÓRIA -->
     <div id="victoryModal" class="modal hidden">
-
         <div class="modal-content victory">
-
             <h1 id="victoryTitle">
                 Vitória
             </h1>
-
             <p id="victoryText">
                 Resultado da partida.
             </p>
-
             <button onclick="location.reload()">
                 Jogar Novamente
             </button>
-
         </div>
-
     </div>
 
     <script src="script.js"></script>
