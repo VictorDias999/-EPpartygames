@@ -71,6 +71,12 @@ let turnoJogador = true;
 
 let cartaSelecionada = null;
 
+let cartaDeclaradaAtual = null;
+
+// Elementos do modal
+let challengeModal = null;
+let challengeText = null;
+
 // ------------------------
 // CLASSE JOGADOR
 // ------------------------
@@ -119,6 +125,10 @@ window.addEventListener("DOMContentLoaded", () => {
 
     console.log("Script carregado!");
 
+    // Inicializar elementos do modal
+    challengeModal = document.getElementById("challengeModal");
+    challengeText = document.getElementById("challengeText");
+
     const startBtn = document.getElementById("startBtn");
 
     if(startBtn){
@@ -151,6 +161,15 @@ window.addEventListener("DOMContentLoaded", () => {
             }
         );
     }
+
+    // Conectar botões de ação após DOM carregar
+    const actionBtns = document.querySelectorAll(".action-btn");
+    actionBtns.forEach(botao => {
+        botao.addEventListener("click", () => {
+            const carta = botao.dataset.card;
+            usarAcao(carta);
+        });
+    });
 
 });
 
@@ -318,25 +337,9 @@ function log(texto){
         logArea.scrollHeight;
 }
 
-// ------------------------
-// BOTÕES DE AÇÃO
-// ------------------------
-
-document
-.querySelectorAll(".action-btn")
-.forEach(botao=>{
-
-    botao.addEventListener(
-        "click",
-        ()=>{
-
-            const carta =
-                botao.dataset.card;
-
-            usarAcao(carta);
-        }
-    );
-});
+// ========================================
+// AÇÕES
+// ========================================
 
 function usarAcao(nomeCarta){
 
@@ -350,23 +353,17 @@ function usarAcao(nomeCarta){
 
     abrirModalDesafio();
 }
+
 // ========================================
 // MODAIS
 // ========================================
 
-const challengeModal =
-    document.getElementById(
-        "challengeModal"
-    );
-
-const challengeText =
-    document.getElementById(
-        "challengeText"
-    );
-
-let cartaDeclaradaAtual = null;
-
 function abrirModalDesafio(){
+
+    if(!challengeModal || !challengeText){
+        console.error("Modal elementos não encontrados");
+        return;
+    }
 
     challengeText.innerText =
         `Você declarou ${cartaDeclaradaAtual}.
