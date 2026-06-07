@@ -3,13 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Trono das Sombras</title>
-
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
-
 <body>
 
     <section id="menuScreen" class="screen active">
@@ -21,11 +18,13 @@
             <button id="startBtn" class="main-btn">
                 Iniciar Partida
             </button>
+            <button id="howToPlayBtn" class="main-btn secondary-btn">
+                Como Jogar
+            </button>
         </div>
     </section>
 
     <section id="gameScreen" class="screen">
-
         <header class="top-bar">
             <div class="player-panel">
                 <h2>👤 Jogador</h2>
@@ -34,11 +33,9 @@
                     <span id="playerCoins">🪙 2</span>
                 </div>
             </div>
-
             <div class="turn-display">
                 <h2 id="turnText">Seu Turno</h2>
             </div>
-
             <div class="player-panel">
                 <h2>🤖 IA</h2>
                 <div class="status">
@@ -66,8 +63,7 @@
 
                 <section class="board-section">
                     <h3>Suas Cartas</h3>
-                    <div id="playerCards" class="cards-container">
-                    </div>
+                    <div id="playerCards" class="cards-container"></div>
                 </section>
 
                 <section class="actions-panel">
@@ -90,26 +86,18 @@
 
             <section class="log-panel">
                 <h3>Registro da Partida</h3>
-                <div id="gameLog">
-                </div>
+                <div id="gameLog"></div>
             </section>
         </div>
-
     </section>
 
     <div id="challengeModal" class="modal hidden">
         <div class="modal-content">
             <h2>⚠️ Desafio</h2>
-            <p id="challengeText">
-                Deseja desafiar?
-            </p>
+            <p id="challengeText">Deseja desafiar?</p>
             <div class="modal-buttons">
-                <button id="challengeYes">
-                    Desafiar
-                </button>
-                <button id="challengeNo">
-                    Aceitar
-                </button>
+                <button id="challengeYes">Desafiar</button>
+                <button id="challengeNo">Aceitar</button>
             </div>
         </div>
     </div>
@@ -117,30 +105,75 @@
     <div id="mageModal" class="modal hidden">
         <div class="modal-content">
             <h2>🔮 Visão do Mago</h2>
-            <p id="revealedCard">
-                Carta revelada
-            </p>
-            <button id="closeMageModal">
-                Fechar
-            </button>
+            <p id="revealedCard">Carta revelada</p>
+            <button id="closeMageModal">Fechar</button>
         </div>
     </div>
 
     <div id="victoryModal" class="modal hidden">
         <div class="modal-content victory">
-            <h1 id="victoryTitle">
-                Vitória
-            </h1>
-            <p id="victoryText">
-                Resultado da partida.
-            </p>
-            <button onclick="location.reload()">
-                Jogar Novamente
-            </button>
+            <h1 id="victoryTitle">Vitória</h1>
+            <p id="victoryText">Resultado da partida.</p>
+            <button onclick="location.reload()">Jogar Novamente</button>
+        </div>
+    </div>
+
+    <div id="rulesModal" class="modal hidden">
+        <div class="modal-content rules-content">
+            <h2>🏰 GUIA DO JOGADOR</h2>
+            <div class="rules-text">
+                <h3>Objetivo</h3>
+                <p>Torne-se o soberano do reino eliminando todas as cartas ou toda a vida do seu adversário.</p>
+                <p><strong>Você vence quando:</strong> O inimigo fica sem cartas ou perde toda a vida.</p>
+                <p><strong>Você perde quando:</strong> Fica sem cartas ou sua vida chega a zero.</p>
+
+                <h3>Recursos</h3>
+                <ul>
+                    <li><strong>❤️ Vida:</strong> Representa sua influência. Se chegar a 0, você perde.</li>
+                    <li><strong>🪙 Moedas:</strong> Usadas para executar ações poderosas. Receba 2 no início da partida, +2 no início do seu turno.</li>
+                </ul>
+
+                <h3>O Blefe & Desafios</h3>
+                <p>Você pode declarar qualquer carta, mesmo que não a possua. O adversário pode <strong>Aceitar</strong> ou <strong>Desafiar</strong>.</p>
+                <ul>
+                    <li><strong>Se você estiver dizendo a verdade:</strong> O desafiante perde 1 vida e a ação acontece normalmente.</li>
+                    <li><strong>Se você estiver blefando:</strong> Você perde 1 vida, 1 carta, e sua ação é cancelada.</li>
+                </ul>
+
+                <h3>Cartas</h3>
+                <ul>
+                    <li><strong>⚔️ Cavaleiro (Custo: 3)</strong>: Causa 1 de dano. Pode ser bloqueado por Guarda.</li>
+                    <li><strong>🛡️ Guarda (Custo: 0)</strong>: Reação para bloquear ataques (Cavaleiro/Assassino). Pode ser blefado.</li>
+                    <li><strong>🧙 Mago (Custo: 4)</strong>: Revela uma carta aleatória do adversário.</li>
+                    <li><strong>👑 Rei (Custo: 3)</strong>: Troca uma de suas cartas por uma do inimigo.</li>
+                    <li><strong>🗡️ Assassino (Custo: 4)</strong>: Elimina uma carta do adversário. Pode ser bloqueado por Guarda.</li>
+                    <li><strong>💰 Comerciante (Custo: 0)</strong>: Recebe 3 moedas.</li>
+                </ul>
+
+                <h3>Ações Universais (Não podem ser desafiadas)</h3>
+                <ul>
+                    <li><strong>🪙 Coletar Taxa (Custo: 0):</strong> +1 moeda.</li>
+                    <li><strong>🎴 Comprar Carta (Custo: 3):</strong> Recebe uma nova carta aleatória.</li>
+                    <li><strong>⚔️ Ataque Direto (Custo: 5):</strong> Causa 1 de dano. Não pode ser bloqueado.</li>
+                    <li><strong>💥 Golpe Supremo (Custo: 7):</strong> Remove 1 vida e 1 carta. Não pode ser bloqueado.</li>
+                </ul>
+
+                <h3>Reações</h3>
+                <p>Ao ser atacado por Cavaleiro ou Assassino, declare um <strong>Guarda</strong>. O atacante pode aceitar ou desafiar a sua defesa.</p>
+
+                <h3>Dicas Estratégicas</h3>
+                <ul>
+                    <li>✔ Acumule moedas para usar ações poderosas.</li>
+                    <li>✔ Observe quais cartas já apareceram.</li>
+                    <li>✔ Nem sempre dizer a verdade (ou desafiar) é a melhor escolha.</li>
+                    <li>✔ Um blefe bem feito pode decidir a partida!</li>
+                </ul>
+                <p style="text-align: center; margin-top: 15px; color: var(--gold-light);"><em>O trono pertence ao mais astuto, não ao mais forte.</em></p>
+            </div>
+            <button id="closeRulesModal">Fechar Guia</button>
         </div>
     </div>
 
     <script src="script.js"></script>
-
 </body>
 </html>
