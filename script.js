@@ -1,6 +1,5 @@
 // ========================================
-// TRONO DAS SOMBRAS - SCRIPT.JS (CORRIGIDO)
-// Tema Medieval Premium - Com Ações Universais
+// TRONO DAS SOMBRAS - SCRIPT.JS
 // ========================================
 window.onerror = function(msg, url, line){
     console.error("Erro JS: " + msg + " Linha: " + line);
@@ -228,7 +227,7 @@ function usarAcao(nomeCarta){
     abrirModalDesafio();
 }
 
-// Quando VOCÊ joga: A IA pensa (Botões ocultos)
+// Resolução IA
 function abrirModalDesafio(){
     challengeText.innerText = `Você declarou: ${cartaDeclaradaAtual}\n🤖 A IA está avaliando se você está blefando...`;
     
