@@ -1,61 +1,119 @@
 // ========================================
-// TRONO DAS SOMBRAS - SCRIPT.JS (CORRIGIDO)
-// Tema Medieval Premium - Com Ações Universais
+// TRONO DAS SOMBRAS
+// SCRIPT.JS
 // ========================================
 window.onerror = function(msg, url, line){
-    console.error("Erro JS: " + msg + " Linha: " + line);
-};
 
+    alert(
+        "Erro JS: " +
+        msg +
+        " Linha: " +
+        line
+    );
+
+};
 // ------------------------
 // CARTAS
 // ------------------------
+
 const CARTAS = {
-    Cavaleiro: { nome: "Cavaleiro", icone: "⚔️", custo: 3, descricao: "Causa 1 de dano." },
-    Guarda: { nome: "Guarda", icone: "🛡️", custo: 0, descricao: "Bloqueia ataques." },
-    Mago: { nome: "Mago", icone: "🧙", custo: 4, descricao: "Revela uma carta." },
-    Rei: { nome: "Rei", icone: "👑", custo: 3, descricao: "Troca uma carta." },
-    Assassino: { nome: "Assassino", icone: "🗡️", custo: 4, descricao: "Remove uma carta." },
-    Comerciante: { nome: "Comerciante", icone: "💰", custo: 0, descricao: "Recebe 3 moedas." }
+    Cavaleiro: {
+        nome: "Cavaleiro",
+        icone: "⚔️",
+        custo: 3,
+        descricao: "Causa 1 de dano."
+    },
+
+    Guarda: {
+        nome: "Guarda",
+        icone: "🛡️",
+        custo: 0,
+        descricao: "Bloqueia ataques."
+    },
+
+    Mago: {
+        nome: "Mago",
+        icone: "🧙",
+        custo: 4,
+        descricao: "Revela uma carta."
+    },
+
+    Rei: {
+        nome: "Rei",
+        icone: "👑",
+        custo: 3,
+        descricao: "Troca uma carta."
+    },
+
+    Assassino: {
+        nome: "Assassino",
+        icone: "🗡️",
+        custo: 4,
+        descricao: "Remove uma carta."
+    },
+
+    Comerciante: {
+        nome: "Comerciante",
+        icone: "💰",
+        custo: 0,
+        descricao: "Recebe 3 moedas."
+    }
 };
 
 // ------------------------
 // ESTADO
 // ------------------------
+
 let jogador;
 let ia;
-let turnoJogador = true;
-let cartaSelecionada = null;
-let cartaDeclaradaAtual = null;
-let jogoAtivo = true;
-let aguardandoDesafio = false;
 
-const challengeModal = document.getElementById("challengeModal");
-const challengeText = document.getElementById("challengeText");
-const challengeYesBtn = document.getElementById("challengeYes");
-const challengeNoBtn = document.getElementById("challengeNo");
+let turnoJogador = true;
+
+let cartaSelecionada = null;
+
+let cartaDeclaradaAtual = null;
+
+// Elementos do modal
+let challengeModal = null;
+let challengeText = null;
 
 // ------------------------
 // CLASSE JOGADOR
 // ------------------------
+
 class Jogador {
+
     constructor(nome){
+
         this.nome = nome;
+
         this.vida = 3;
+
         this.moedas = 2;
+
         this.cartas = [];
+
         this.comprarCarta();
         this.comprarCarta();
     }
 
     comprarCarta(){
+
         const nomes = Object.keys(CARTAS);
-        const sorteada = nomes[Math.floor(Math.random() * nomes.length)];
+
+        const sorteada =
+            nomes[Math.floor(
+                Math.random() * nomes.length
+            )];
+
         this.cartas.push(sorteada);
     }
 
     perderCarta(indice){
-        if (indice >= 0 && indice < this.cartas.length) {
-            this.cartas.splice(indice, 1);
+
+        if(indice >= 0 && indice < this.cartas.length){
+
+            this.cartas.splice(indice,1);
         }
     }
 }
@@ -63,494 +121,762 @@ class Jogador {
 // ------------------------
 // INICIAR
 // ------------------------
-window.addEventListener("DOMContentLoaded", () => {
-    const startBtn = document.getElementById("startBtn");
-    if(startBtn) startBtn.addEventListener("click", iniciarPartida);
 
-    const closeMageBtn = document.getElementById("closeMageModal");
-    if(closeMageBtn){
-        closeMageBtn.addEventListener("click", () => {
-            document.getElementById("mageModal").classList.add("hidden");
-        });
+window.addEventListener("DOMContentLoaded", () => {
+
+    console.log("Script carregado!");
+
+    // Inicializar elementos do modal
+    challengeModal = document.getElementById("challengeModal");
+    challengeText = document.getElementById("challengeText");
+
+    const startBtn = document.getElementById("startBtn");
+
+    if(startBtn){
+
+        startBtn.addEventListener(
+            "click",
+            iniciarPartida
+        );
+
+        console.log("Botão conectado.");
     }
 
-    // Configurar botões de desafio (Apenas usados quando a IA joga)
-    if(challengeYesBtn) challengeYesBtn.addEventListener("click", () => {
-        if(aguardandoDesafio) {
-            aguardandoDesafio = false;
-            challengeModal.classList.add("hidden");
-            resolverJogadaIA(cartaDeclaradaAtual, true);
-        }
+    const closeMageBtn =
+        document.getElementById(
+            "closeMageModal"
+        );
+
+    if(closeMageBtn){
+
+        closeMageBtn.addEventListener(
+            "click",
+            () => {
+
+                document
+                    .getElementById(
+                        "mageModal"
+                    )
+                    .classList
+                    .add("hidden");
+            }
+        );
+    }
+
+    // Conectar botões de ação após DOM carregar
+    const actionBtns = document.querySelectorAll(".action-btn");
+    actionBtns.forEach(botao => {
+        botao.addEventListener("click", () => {
+            const carta = botao.dataset.card;
+            usarAcao(carta);
+        });
     });
-    if(challengeNoBtn) challengeNoBtn.addEventListener("click", () => {
-        if(aguardandoDesafio) {
-            aguardandoDesafio = false;
-            challengeModal.classList.add("hidden");
-            resolverJogadaIA(cartaDeclaradaAtual, false);
-        }
-    });
+
 });
 
 function iniciarPartida(){
-    jogador = new Jogador("Jogador");
-    ia = new Jogador("IA");
-    jogoAtivo = true;
-    turnoJogador = true;
-    aguardandoDesafio = false;
-    
-    document.getElementById("menuScreen").classList.remove("active");
-    document.getElementById("gameScreen").classList.add("active");
-    
+
+    jogador =
+        new Jogador("Jogador");
+
+    ia =
+        new Jogador("IA");
+
+    document
+        .getElementById("menuScreen")
+        .classList
+        .remove("active");
+
+    document
+        .getElementById("gameScreen")
+        .classList
+        .add("active");
+
     renderizarTudo();
+
     log("🏰 A disputa pelo trono começou.");
 }
 
 // ------------------------
 // RENDER
 // ------------------------
+
 function renderizarTudo(){
+
     atualizarStatus();
+
     renderizarCartasJogador();
+
     renderizarCartasIA();
 }
 
 function atualizarStatus(){
-    document.getElementById("playerLife").innerText = "❤️ " + jogador.vida;
-    document.getElementById("playerCoins").innerText = "🪙 " + jogador.moedas;
-    document.getElementById("aiLife").innerText = "❤️ " + ia.vida;
-    document.getElementById("aiCoins").innerText = "🪙 " + ia.moedas;
+
+    document
+        .getElementById("playerLife")
+        .innerText =
+            "❤️ " + jogador.vida;
+
+    document
+        .getElementById("playerCoins")
+        .innerText =
+            "🪙 " + jogador.moedas;
+
+    document
+        .getElementById("aiLife")
+        .innerText =
+            "❤️ " + ia.vida;
+
+    document
+        .getElementById("aiCoins")
+        .innerText =
+            "🪙 " + ia.moedas;
 }
 
 function renderizarCartasJogador(){
-    const area = document.getElementById("playerCards");
+
+    const area =
+        document.getElementById(
+            "playerCards"
+        );
+
     area.innerHTML = "";
 
-    jogador.cartas.forEach((carta, index) => {
+    jogador.cartas.forEach((carta,index)=>{
+
         const dados = CARTAS[carta];
-        const div = document.createElement("div");
+
+        const div =
+            document.createElement("div");
+
         div.className = "card";
-        if(cartaSelecionada === index) div.classList.add("selected");
 
         div.innerHTML = `
-            <div class="card-title">${dados.nome}</div>
-            <div class="card-cost">🪙 ${dados.custo}</div>
-            <div class="card-icon">${dados.icone}</div>
-            <div class="card-desc">${dados.descricao}</div>
+            <div class="card-title">
+                ${dados.nome}
+            </div>
+
+            <div class="card-icon">
+                ${dados.icone}
+            </div>
+
+            <div class="card-desc">
+                ${dados.descricao}
+            </div>
         `;
-        div.onclick = () => selecionarCarta(index);
+
+        div.onclick = ()=>{
+
+            selecionarCarta(index);
+        };
+
         area.appendChild(div);
     });
 }
 
 function renderizarCartasIA(){
-    const area = document.getElementById("aiCards");
+
+    const area =
+        document.getElementById(
+            "aiCards"
+        );
+
     area.innerHTML = "";
-    ia.cartas.forEach(() => {
-        const carta = document.createElement("div");
-        carta.className = "card back-card";
+
+    ia.cartas.forEach(()=>{
+
+        const carta =
+            document.createElement("div");
+
+        carta.className =
+            "card back-card";
+
         area.appendChild(carta);
     });
 }
 
+// ------------------------
+// SELEÇÃO
+// ------------------------
+
 function selecionarCarta(indice){
-    if(!turnoJogador || jogoAtivo === false) return;
+
     cartaSelecionada = indice;
-    const nome = jogador.cartas[indice];
-    log("🃏 Carta selecionada: " + nome);
-    renderizarCartasJogador();
+
+    const nome =
+        jogador.cartas[indice];
+
+    log(
+        "🃏 Carta selecionada: "
+        + nome
+    );
 }
+
+// ------------------------
+// LOG
+// ------------------------
 
 function log(texto){
-    const logArea = document.getElementById("gameLog");
-    const linha = document.createElement("div");
-    linha.className = "log-entry";
-    linha.innerText = texto;
+
+    const logArea =
+        document.getElementById(
+            "gameLog"
+        );
+
+    const linha =
+        document.createElement("div");
+
+    linha.className =
+        "log-entry";
+
+    linha.innerText =
+        texto;
+
     logArea.appendChild(linha);
-    logArea.scrollTop = logArea.scrollHeight;
+
+    logArea.scrollTop =
+        logArea.scrollHeight;
 }
 
-// ------------------------
-// BOTÕES DE AÇÃO
-// ------------------------
-document.querySelectorAll(".action-btn").forEach(botao => {
-    botao.addEventListener("click", () => {
-        if(!turnoJogador || !jogoAtivo || aguardandoDesafio) return;
-
-        if(botao.dataset.universal) {
-            const acaoUniversal = botao.dataset.universal;
-            executarAcaoUniversalJogador(acaoUniversal);
-        } else {
-            const carta = botao.dataset.card;
-            usarAcao(carta);
-        }
-    });
-});
-
-// --- LÓGICA DAS AÇÕES UNIVERSAIS ---
-function executarAcaoUniversalJogador(acao) {
-    if(acao === "Taxar") {
-        jogador.moedas += 1;
-        log("🪙 AÇÃO UNIVERSAL: Você coletou 1 moeda (Ação segura, sem blefe).");
-        atualizarStatus();
-        finalizarTurnoJogador();
-    } 
-    else if(acao === "Golpe") {
-        if(jogador.moedas < 5) {
-            log("❌ Moedas insuficientes para o Golpe Supremo. Requer 🪙 5.");
-            return;
-        }
-
-        jogador.moedas -= 5;
-        ia.vida--;
-        log("💥 GOLPE SUPREMO! Você pagou 5 moedas e desferiu um ataque devastador. IA perdeu 1 vida!");
-        
-        atualizarStatus();
-        verificarVitoria();
-        if(jogoAtivo) finalizarTurnoJogador();
-    }
-}
+// ========================================
+// AÇÕES
+// ========================================
 
 function usarAcao(nomeCarta){
-    if(!turnoJogador || !jogoAtivo || aguardandoDesafio) return;
 
-    const custo = CARTAS[nomeCarta].custo;
-    if(jogador.moedas < custo){
-        log(`❌ Moedas insuficientes para usar ${nomeCarta} (Custa 🪙 ${custo}).`);
+    if(!turnoJogador){
+
         return;
     }
 
-    if(nomeCarta === "Rei" && cartaSelecionada === null){
-        log("👑 Erro: Selecione uma de suas cartas clicando nela antes de ativar o Rei.");
-        return;
-    }
+    cartaDeclaradaAtual =
+        nomeCarta;
 
-    cartaDeclaradaAtual = nomeCarta;
     abrirModalDesafio();
 }
 
-// Quando VOCÊ joga: A IA pensa (Botões ocultos)
+// ========================================
+// MODAIS
+// ========================================
+
 function abrirModalDesafio(){
-    challengeText.innerText = `Você declarou: ${cartaDeclaradaAtual}\n🤖 A IA está avaliando se você está blefando...`;
-    
-    if(challengeYesBtn) challengeYesBtn.style.display = "none";
-    if(challengeNoBtn) challengeNoBtn.style.display = "none";
-    
-    challengeModal.classList.remove("hidden");
 
-    setTimeout(() => {
-        const desafia = iaDecideDesafio(cartaDeclaradaAtual);
-        challengeModal.classList.add("hidden");
-        
-        if(challengeYesBtn) challengeYesBtn.style.display = "";
-        if(challengeNoBtn) challengeNoBtn.style.display = "";
-        
-        resolverJogadaJogador(cartaDeclaradaAtual, desafia);
-    }, 1500);
-}
-
-// ------------------------
-// INTELIGÊNCIA ARTIFICIAL
-// ------------------------
-function iaDecideDesafio(carta){
-    let possui = jogador.cartas.includes(carta);
-    if(possui){
-        return Math.random() < 0.15; 
+    if(!challengeModal || !challengeText){
+        console.error("Modal elementos não encontrados");
+        return;
     }
-    return Math.random() < 0.60; 
+
+    challengeText.innerText =
+        `Você declarou ${cartaDeclaradaAtual}.
+        A IA está avaliando...`;
+
+    challengeModal.classList.remove(
+        "hidden"
+    );
+
+    setTimeout(()=>{
+
+        const desafia =
+            iaDecideDesafio(
+                cartaDeclaradaAtual
+            );
+
+        challengeModal.classList.add(
+            "hidden"
+        );
+
+        resolverJogadaJogador(
+            cartaDeclaradaAtual,
+            desafia
+        );
+
+    },1500);
 }
 
-// ------------------------
-// RESOLUÇÃO DE JOGADAS DO JOGADOR
-// ------------------------
-function resolverJogadaJogador(carta, desafia){
-    let possui = jogador.cartas.includes(carta);
+// ========================================
+// IA
+// ========================================
+
+function iaDecideDesafio(carta){
+
+    let possui =
+        jogador.cartas.includes(carta);
+
+    if(possui){
+
+        return Math.random() < 0.25;
+    }
+
+    return Math.random() < 0.65;
+}
+
+// ========================================
+// BLEFE
+// ========================================
+
+function resolverJogadaJogador(
+    carta,
+    desafia
+){
+
+    let possui =
+        jogador.cartas.includes(carta);
 
     if(desafia){
-        log("🤖 IA desafiou sua declaração!");
+
+        log(
+            "🤖 IA desafiou sua declaração."
+        );
+
         if(possui){
+
             ia.vida--;
-            log("✅ Você falou a verdade! IA perdeu 1 vida pelo desafio errado.");
-            atualizarStatus();
-            verificarVitoria();
-            if(jogoAtivo) executarPoderJogador(carta);
-        } else {
+
+            log(
+                "✅ Você tinha a carta."
+            );
+
+            log(
+                "❤️ IA perdeu 1 vida."
+            );
+
+            executarPoderJogador(
+                carta
+            );
+        }
+        else{
+
             jogador.vida--;
-            log("❌ Seu blefe foi descoberto! Você perdeu 1 vida.");
-            atualizarStatus();
-            verificarVitoria();
-            if(jogoAtivo) finalizarTurnoJogador();
+
+            log(
+                "❌ Blefe descoberto."
+            );
+
+            log(
+                "❤️ Você perdeu 1 vida."
+            );
         }
-    } else {
-        log("🤖 IA aceitou sua declaração.");
-        executarPoderJogador(carta);
     }
-}
+    else{
 
-function executarPoderJogador(carta){
-    if(!jogoAtivo) return;
-    
-    jogador.moedas -= CARTAS[carta].custo;
+        log(
+            "🤖 IA aceitou sua declaração."
+        );
 
-    if(carta === "Cavaleiro" || carta === "Assassino") {
-        let iaTemGuarda = ia.cartas.includes("Guarda");
-        let iaUsaGuarda = iaTemGuarda ? Math.random() < 0.85 : Math.random() < 0.30; 
-
-        if(iaUsaGuarda) {
-            log(`🛡️ REAÇÃO: A IA declarou um Guarda para bloquear seu ${carta}!`);
-            let desafiarGuarda = confirm(`A IA declarou REAÇÃO de Guarda contra seu ${carta}.\nDeseja desafiar?`);
-            
-            if(desafiarGuarda) {
-                if(iaTemGuarda) {
-                    log("❌ A IA realmente tinha Guarda! Seu ataque foi bloqueado.");
-                } else {
-                    log("✅ Você desmascarou o blefe! O ataque passa!");
-                    ia.vida--;
-                    aplicarEfeitoAtaqueJogador(carta);
-                }
-            } else {
-                log("🛡️ Você aceitou o Guarda da IA. Seu ataque foi mitigado.");
-            }
-        } else {
-            aplicarEfeitoAtaqueJogador(carta);
-        }
-    } else {
-        if(carta === "Comerciante") {
-            jogador.moedas += 3;
-            log("💰 Você recebeu 3 moedas do Comerciante.");
-        } else if(carta === "Mago") {
-            usarMago();
-        } else if(carta === "Rei") {
-            usarRei();
-        }
+        executarPoderJogador(
+            carta
+        );
     }
 
     atualizarStatus();
+
     verificarVitoria();
-    if(jogoAtivo) finalizarTurnoJogador();
+
+    if(ia.vida > 0 &&
+       jogador.vida > 0){
+
+        passarTurno();
+    }
 }
 
-function aplicarEfeitoAtaqueJogador(tipoAtaque) {
+// ========================================
+// PODERES
+// ========================================
 
-    if(tipoAtaque === "Cavaleiro") {
-        ia.vida--;
-        log("⚔️ Cavaleiro causou 1 de dano.");
-    }
+function executarPoderJogador(
+    carta
+){
 
-    if(tipoAtaque === "Assassino") {
+    switch(carta){
 
-        if(ia.cartas.length > 0){
+        case "Comerciante":
 
-            let indice = Math.floor(
-                Math.random() * ia.cartas.length
+            jogador.moedas += 3;
+
+            log(
+                "💰 Você recebeu 3 moedas."
             );
 
-            let removida = ia.cartas[indice];
+            break;
 
-            ia.perderCarta(indice);
+        case "Cavaleiro":
 
-            log(`🗡️ Assassino eliminou a carta ${removida}.`);
-        }
+            if(jogador.moedas < 3){
+
+                log(
+                    "❌ Moedas insuficientes."
+                );
+
+                return;
+            }
+
+            jogador.moedas -= 3;
+
+            ia.vida--;
+
+            log(
+                "⚔️ Cavaleiro causou 1 dano."
+            );
+
+            break;
+
+        case "Mago":
+
+            usarMago();
+
+            break;
+
+        case "Assassino":
+
+            usarAssassino();
+
+            break;
+
+        case "Rei":
+
+            usarRei();
+
+            break;
+
+        case "Guarda":
+
+            log(
+                "🛡️ Guarda preparado."
+            );
+
+            break;
     }
 
     renderizarTudo();
 }
 
+// ========================================
+// MAGO
+// ========================================
+
 function usarMago(){
-    const indice = Math.floor(Math.random() * ia.cartas.length);
-    document.getElementById("revealedCard").innerText = `Carta revelada: ${ia.cartas[indice]}`;
-    document.getElementById("mageModal").classList.remove("hidden");
-    log("🔮 Mago revelou uma carta da IA!");
+
+    if(jogador.moedas < 4){
+
+        log(
+            "❌ Moedas insuficientes."
+        );
+
+        return;
+    }
+
+    jogador.moedas -= 4;
+
+    const indice =
+        Math.floor(
+            Math.random() *
+            ia.cartas.length
+        );
+
+    const carta =
+        ia.cartas[indice];
+
+    document
+        .getElementById(
+            "revealedCard"
+        )
+        .innerText =
+            `A carta vista foi: ${carta}`;
+
+    document
+        .getElementById(
+            "mageModal"
+        )
+        .classList
+        .remove("hidden");
+
+    log(
+        "🔮 Você utilizou Mago."
+    );
 }
+
+
+// ========================================
+// ASSASSINO
+// ========================================
+
+function usarAssassino(){
+
+    if(jogador.moedas < 4){
+
+        log(
+            "❌ Moedas insuficientes."
+        );
+
+        return;
+    }
+
+    jogador.moedas -= 4;
+
+    const indice =
+        Math.floor(
+            Math.random() *
+            ia.cartas.length
+        );
+
+    ia.perderCarta(indice);
+
+    log(
+        "🗡️ Uma carta da IA foi eliminada."
+    );
+}
+
+// ========================================
+// REI
+// ========================================
 
 function usarRei(){
 
-    const indiceIA = Math.floor(Math.random() * ia.cartas.length);
-    
-    let cartaJogador = jogador.cartas[cartaSelecionada];
-    let cartaIA = ia.cartas[indiceIA];
+    if(jogador.moedas < 3){
 
-    jogador.cartas[cartaSelecionada] = cartaIA;
-    ia.cartas[indiceIA] = cartaJogador;
+        log(
+            "❌ Moedas insuficientes."
+        );
 
-    log(`👑 Rei realizou a troca de cartas!`);
-    cartaSelecionada = null;
-    renderizarCartasJogador();
-}
-
-function finalizarTurnoJogador() {
-    if(!jogoAtivo) return;
-    turnoJogador = false;
-    cartaSelecionada = null;
-    document.getElementById("turnText").innerText = "Turno da IA";
-    renderizarCartasJogador();
-    setTimeout(turnoIA, 2000);
-}
-
-// ------------------------
-// FLUXO DE TURNOS
-// ------------------------
-function turnoIA(){
-    if(!jogoAtivo || ia.vida <= 0 || jogador.vida <= 0) return;
-    
-    ia.moedas += 2; 
-    
-    if(ia.moedas >= 7 && Math.random() < 0.6) {
-        ia.moedas -= 7;
-        jogador.vida--;
-        if(jogador.cartas.length > 0) jogador.perderCarta(0);
-        log("💥 🤖 IA DESFERIU UM GOLPE SUPREMO! Você perdeu 1 vida e 1 carta.");
-        
-        atualizarStatus();
-        verificarVitoria();
-        if(jogoAtivo) passarParaProximoTurnoJogador();
         return;
     }
 
-    let chance = Math.random();
-    let declarada;
+    jogador.moedas -= 3;
 
-    if(ia.moedas >= 4 && chance < 0.4){
-        declarada = "Assassino";
-    } else if(ia.moedas >= 3 && chance < 0.7){
-        declarada = "Cavaleiro";
-    } else if(chance < 0.85) {
-        declarada = "Comerciante";
-    } else {
-        ia.moedas += 1;
-        log("🪙 🤖 IA coletou 1 moeda (Ação segura).");
-        atualizarStatus();
-        passarParaProximoTurnoJogador();
+    if(cartaSelecionada === null){
+
+        log(
+            "👑 Selecione uma carta sua."
+        );
+
         return;
     }
 
-    log(`🤖 IA declarou: ${declarada}`);
-    cartaDeclaradaAtual = declarada;
+    const indiceIA =
+        Math.floor(
+            Math.random() *
+            ia.cartas.length
+        );
 
-    // Quando a IA joga: VOCÊ pensa (Botões visíveis)
-    setTimeout(() => {
-        aguardandoDesafio = true;
-        challengeText.innerText = `A IA declarou usar o ${declarada}.\n\nDeseja desafiar o blefe dela?`;
-        
-        if(challengeYesBtn) challengeYesBtn.style.display = "";
-        if(challengeNoBtn) challengeNoBtn.style.display = "";
-        
-        challengeModal.classList.remove("hidden");
-    }, 1200);
-}
+    let temp =
+        jogador.cartas[cartaSelecionada];
 
-// ------------------------
-// RESOLUÇÃO DE JOGADAS DA IA
-// ------------------------
-function resolverJogadaIA(carta, desafiar){
-    let possui = ia.cartas.includes(carta);
+    jogador.cartas[cartaSelecionada] =
+        ia.cartas[indiceIA];
 
-    if(desafiar){
-        if(possui){
-            log("❌ A IA provou a verdade! Você perdeu o desafio e 1 vida.");
-            jogador.vida--;
-            atualizarStatus();
-            verificarVitoria();
-            if(jogoAtivo) executarPoderIA(carta);
-        } else {
-            log("✅ Você pegou o blefe da IA! IA perdeu 1 vida.");
-            ia.vida--;
-            atualizarStatus();
-            verificarVitoria();
-            if(jogoAtivo) passarParaProximoTurnoJogador();
-        }
-    } else {
-        executarPoderIA(carta);
-    }
-}
+    ia.cartas[indiceIA] =
+        temp;
 
-function executarPoderIA(carta){
-    if(!jogoAtivo) return;
-    
-    ia.moedas -= CARTAS[carta].custo;
+    log(
+        "👑 Cartas trocadas."
+    );
 
-    if(carta === "Cavaleiro" || carta === "Assassino") {
-        let querReagir = confirm(`🤖 IA está te atacando com ${carta}!\nDeseja declarar REAÇÃO de Guarda?`);
-        
-        if(querReagir) {
-            log("🛡️ Você declarou reação de Guarda!");
-            let iaDesafiaGuarda = Math.random() < 0.40; 
-            let jogadorTemGuarda = jogador.cartas.includes("Guarda");
-
-            if(iaDesafiaGuarda) {
-                log("🤖 IA desafiou seu Guarda!");
-                if(jogadorTemGuarda) {
-                    log("✅ Você tinha Guarda! O ataque falhou e IA perdeu 1 vida.");
-                    ia.vida--;
-                } else {
-                    log("❌ Seu blefe foi descoberto! Você perdeu 1 vida e o ataque te acerta.");
-                    jogador.vida--;
-                    aplicarEfeitoAtaqueIA(carta);
-                }
-            } else {
-                log("🤖 IA aceitou seu Guarda. Ataque anulado.");
-            }
-        } else {
-            aplicarEfeitoAtaqueIA(carta);
-        }
-    } else {
-        if(carta === "Comerciante") {
-            ia.moedas += 3;
-            log("💰 IA coletou tributos com o Comerciante.");
-        } else if(carta === "Rei") {
-            if(ia.cartas.length > 0 && jogador.cartas.length > 0) {
-                const idxIA = Math.floor(Math.random() * ia.cartas.length);
-                const idxJ = Math.floor(Math.random() * jogador.cartas.length);
-                let tmp = ia.cartas[idxIA];
-                ia.cartas[idxIA] = jogador.cartas[idxJ];
-                jogador.cartas[idxJ] = tmp;
-                log("👑 IA usou Rei e trocou uma carta com você.");
-                renderizarCartasJogador();
-            }
-        }
-    }
-
-    atualizarStatus();
-    verificarVitoria();
-    if(jogoAtivo) passarParaProximoTurnoJogador();
-}
-
-function aplicarEfeitoAtaqueIA(tipoAtaque) {
-    if(jogador.cartas.length === 0) return;
-
-    if(tipoAtaque === "Cavaleiro") {
-        jogador.vida--;
-        log("⚔️ Cavaleiro da IA transpôs suas defesas. Você perdeu 1 vida.");
-    } else if(tipoAtaque === "Assassino") {
-        jogador.perderCarta(0); 
-        log("🗡️ Assassino da IA eliminou uma de suas cartas.");
-    }
-}
-
-function passarParaProximoTurnoJogador(){
-    if(!jogoAtivo) return;
-    
-    turnoJogador = true;
-    jogador.moedas += 2; 
-    document.getElementById("turnText").innerText = "Seu Turno";
     renderizarTudo();
 }
 
-// ------------------------
-// FIM DE JOGO
-// ------------------------
+// ========================================
+// TURNOS
+// ========================================
+
+function passarTurno(){
+
+    turnoJogador = false;
+
+    document
+        .getElementById(
+            "turnText"
+        )
+        .innerText =
+            "Turno da IA";
+
+    setTimeout(
+        turnoIA,
+        2000
+    );
+}
+
+function turnoIA(){
+
+    ia.moedas += 2;
+
+    const cartas =
+        Object.keys(CARTAS);
+
+    const declarada =
+        cartas[
+            Math.floor(
+                Math.random() *
+                cartas.length
+            )
+        ];
+
+    log(
+        `🤖 IA declarou ${declarada}`
+    );
+
+    setTimeout(()=>{
+
+        const desafiar =
+            confirm(
+                `A IA declarou ${declarada}.
+Deseja desafiar?`
+            );
+
+        resolverJogadaIA(
+            declarada,
+            desafiar
+        );
+
+    },1000);
+}
+
+// ========================================
+// IA RESOLVE
+// ========================================
+
+function resolverJogadaIA(
+    carta,
+    desafiar
+){
+
+    let possui =
+        ia.cartas.includes(carta);
+
+    if(desafiar){
+
+        if(possui){
+
+            jogador.vida--;
+
+            log(
+                "❌ A IA tinha a carta."
+            );
+        }
+        else{
+
+            ia.vida--;
+
+            log(
+                "✅ Blefe da IA descoberto."
+            );
+        }
+    }
+    else{
+
+        executarPoderIA(
+            carta
+        );
+    }
+
+    atualizarStatus();
+
+    verificarVitoria();
+
+    turnoJogador = true;
+
+    jogador.moedas += 2;
+
+    document
+        .getElementById(
+            "turnText"
+        )
+        .innerText =
+            "Seu Turno";
+}
+
+// ========================================
+// IA PODERES
+// ========================================
+
+function executarPoderIA(
+    carta
+){
+
+    switch(carta){
+
+        case "Comerciante":
+
+            ia.moedas += 3;
+
+            break;
+
+        case "Cavaleiro":
+
+            if(ia.moedas >= 3){
+
+                ia.moedas -= 3;
+
+                jogador.vida--;
+            }
+
+            break;
+
+        case "Assassino":
+
+            if(ia.moedas >= 4){
+
+                ia.moedas -= 4;
+
+                jogador.perderCarta(
+                    Math.floor(
+                        Math.random() *
+                        jogador.cartas.length
+                    )
+                );
+            }
+
+            break;
+    }
+
+    renderizarTudo();
+}
+
+// ========================================
+// VITÓRIA
+// ========================================
+
 function verificarVitoria(){
-    if(jogador.vida <= 0 || jogador.cartas.length === 0){
-        jogoAtivo = false;
-        mostrarFim("💀 Derrota", "As conspirações venceram. Você perdeu o Trono.");
-    } else if(ia.vida <= 0 || ia.cartas.length === 0){
-        jogoAtivo = false;
-        mostrarFim("🏆 Vitória", "Sua dinastia triunfou sobre o Trono das Sombras!");
+
+    if(jogador.vida <= 0){
+
+        mostrarFim(
+            "💀 Derrota",
+            "Você perdeu o trono."
+        );
+    }
+
+    if(ia.vida <= 0){
+
+        mostrarFim(
+            "🏆 Vitória",
+            "Você conquistou o trono."
+        );
     }
 }
 
-function mostrarFim(titulo, texto){
-    document.getElementById("victoryTitle").innerText = titulo;
-    document.getElementById("victoryText").innerText = texto;
-    document.getElementById("victoryModal").classList.remove("hidden");
-    log(titulo + " - " + texto);
+function mostrarFim(
+    titulo,
+    texto
+){
+
+    document
+        .getElementById(
+            "victoryTitle"
+        )
+        .innerText =
+            titulo;
+
+    document
+        .getElementById(
+            "victoryText"
+        )
+        .innerText =
+            texto;
+
+    document
+        .getElementById(
+            "victoryModal"
+        )
+        .classList
+        .remove("hidden");
 }
