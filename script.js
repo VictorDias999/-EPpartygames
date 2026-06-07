@@ -195,14 +195,14 @@ function executarAcaoUniversalJogador(acao) {
         finalizarTurnoJogador();
     } 
     else if(acao === "Golpe") {
-        if(jogador.moedas < 5) {
-            log("❌ Moedas insuficientes para o Golpe Supremo. Requer 🪙 5.");
+        if(jogador.moedas < 7) {
+            log("❌ Moedas insuficientes para o Golpe Supremo. Requer 🪙 7.");
             return;
         }
 
-        jogador.moedas -= 5;
+        jogador.moedas -= 7;
         ia.vida--;
-        log("💥 GOLPE SUPREMO! Você pagou 5 moedas e desferiu um ataque devastador. IA perdeu 1 vida!");
+        log("💥 GOLPE SUPREMO! Você pagou 7 moedas e desferiu um ataque devastador. IA perdeu 1 vida!");
         
         atualizarStatus();
         verificarVitoria();
@@ -397,8 +397,7 @@ function turnoIA(){
     if(ia.moedas >= 7 && Math.random() < 0.6) {
         ia.moedas -= 7;
         jogador.vida--;
-        if(jogador.cartas.length > 0) jogador.perderCarta(0);
-        log("💥 🤖 IA DESFERIU UM GOLPE SUPREMO! Você perdeu 1 vida e 1 carta.");
+        log("💥 🤖 IA DESFERIU UM GOLPE SUPREMO! Você perdeu 1 vida.");
         
         atualizarStatus();
         verificarVitoria();
