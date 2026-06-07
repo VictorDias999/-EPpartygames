@@ -337,16 +337,29 @@ function executarPoderJogador(carta){
 }
 
 function aplicarEfeitoAtaqueJogador(tipoAtaque) {
-    if(ia.cartas.length === 0) return;
-    
+
     if(tipoAtaque === "Cavaleiro") {
         ia.vida--;
-        log("⚔️ Cavaleiro desferiu um golpe! IA perdeu 1 vida.");
-    } else if(tipoAtaque === "Assassino") {
-        ia.vida--;
-        ia.perderCarta(0); 
-        log("🗡️ Assassino eliminou uma carta da IA.");
+        log("⚔️ Cavaleiro causou 1 de dano.");
     }
+
+    if(tipoAtaque === "Assassino") {
+
+        if(ia.cartas.length > 0){
+
+            let indice = Math.floor(
+                Math.random() * ia.cartas.length
+            );
+
+            let removida = ia.cartas[indice];
+
+            ia.perderCarta(indice);
+
+            log(`🗡️ Assassino eliminou a carta ${removida}.`);
+        }
+    }
+
+    renderizarTudo();
 }
 
 function usarMago(){
