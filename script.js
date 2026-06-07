@@ -195,19 +195,14 @@ function executarAcaoUniversalJogador(acao) {
         finalizarTurnoJogador();
     } 
     else if(acao === "Golpe") {
-        if(jogador.moedas < 7) {
-            log("❌ Moedas insuficientes para o Golpe Supremo. Requer 🪙 7.");
-            return;
-        }
-        if(ia.cartas.length === 0) {
-            log("❌ A IA não tem cartas para atacar.");
+        if(jogador.moedas < 5) {
+            log("❌ Moedas insuficientes para o Golpe Supremo. Requer 🪙 5.");
             return;
         }
 
-        jogador.moedas -= 7;
+        jogador.moedas -= 5;
         ia.vida--;
-        ia.perderCarta(0); 
-        log("💥 GOLPE SUPREMO! Você pagou 7 moedas e desferiu um ataque devastador. IA perdeu 1 vida e 1 carta!");
+        log("💥 GOLPE SUPREMO! Você pagou 5 moedas e desferiu um ataque devastador. IA perdeu 1 vida!");
         
         atualizarStatus();
         verificarVitoria();
@@ -281,7 +276,6 @@ function resolverJogadaJogador(carta, desafia){
         } else {
             jogador.vida--;
             log("❌ Seu blefe foi descoberto! Você perdeu 1 vida.");
-            if(jogador.cartas.length > 0) jogador.perderCarta(0);
             atualizarStatus();
             verificarVitoria();
             if(jogoAtivo) finalizarTurnoJogador();
@@ -311,7 +305,6 @@ function executarPoderJogador(carta){
                 } else {
                     log("✅ Você desmascarou o blefe! O ataque passa!");
                     ia.vida--;
-                    if(ia.cartas.length > 0) ia.perderCarta(0);
                     aplicarEfeitoAtaqueJogador(carta);
                 }
             } else {
@@ -363,10 +356,6 @@ function aplicarEfeitoAtaqueJogador(tipoAtaque) {
 }
 
 function usarMago(){
-    if(ia.cartas.length === 0) {
-        log("🔮 Mago - Nenhuma carta para revelar.");
-        return;
-    }
     const indice = Math.floor(Math.random() * ia.cartas.length);
     document.getElementById("revealedCard").innerText = `Carta revelada: ${ia.cartas[indice]}`;
     document.getElementById("mageModal").classList.remove("hidden");
@@ -374,10 +363,6 @@ function usarMago(){
 }
 
 function usarRei(){
-    if(ia.cartas.length === 0 || jogador.cartas.length === 0 || cartaSelecionada === null) {
-        log("👑 Rei - Não pode realizar a troca.");
-        return;
-    }
 
     const indiceIA = Math.floor(Math.random() * ia.cartas.length);
     
@@ -463,14 +448,12 @@ function resolverJogadaIA(carta, desafiar){
         if(possui){
             log("❌ A IA provou a verdade! Você perdeu o desafio e 1 vida.");
             jogador.vida--;
-            if(jogador.cartas.length > 0) jogador.perderCarta(0);
             atualizarStatus();
             verificarVitoria();
             if(jogoAtivo) executarPoderIA(carta);
         } else {
             log("✅ Você pegou o blefe da IA! IA perdeu 1 vida.");
             ia.vida--;
-            if(ia.cartas.length > 0) ia.perderCarta(0);
             atualizarStatus();
             verificarVitoria();
             if(jogoAtivo) passarParaProximoTurnoJogador();
@@ -498,11 +481,9 @@ function executarPoderIA(carta){
                 if(jogadorTemGuarda) {
                     log("✅ Você tinha Guarda! O ataque falhou e IA perdeu 1 vida.");
                     ia.vida--;
-                    if(ia.cartas.length > 0) ia.perderCarta(0);
                 } else {
                     log("❌ Seu blefe foi descoberto! Você perdeu 1 vida e o ataque te acerta.");
                     jogador.vida--;
-                    if(jogador.cartas.length > 0) jogador.perderCarta(0);
                     aplicarEfeitoAtaqueIA(carta);
                 }
             } else {
@@ -540,7 +521,6 @@ function aplicarEfeitoAtaqueIA(tipoAtaque) {
         jogador.vida--;
         log("⚔️ Cavaleiro da IA transpôs suas defesas. Você perdeu 1 vida.");
     } else if(tipoAtaque === "Assassino") {
-        jogador.vida--;
         jogador.perderCarta(0); 
         log("🗡️ Assassino da IA eliminou uma de suas cartas.");
     }
