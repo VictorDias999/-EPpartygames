@@ -62,9 +62,6 @@ class Jogador {
 // ------------------------
 // INICIAR
 // ------------------------
-// ------------------------
-// INICIAR E EVENTOS
-// ------------------------
 window.addEventListener("DOMContentLoaded", () => {
     const startBtn = document.getElementById("startBtn");
     if(startBtn) startBtn.addEventListener("click", iniciarPartida);
@@ -93,23 +90,6 @@ window.addEventListener("DOMContentLoaded", () => {
             document.getElementById("mageModal").classList.add("hidden");
         });
     }
-
-    // Configurar botões de desafio (Apenas usados quando a IA joga)
-    if(challengeYesBtn) challengeYesBtn.addEventListener("click", () => {
-        if(aguardandoDesafio) {
-            aguardandoDesafio = false;
-            challengeModal.classList.add("hidden");
-            resolverJogadaIA(cartaDeclaradaAtual, true);
-        }
-    });
-    if(challengeNoBtn) challengeNoBtn.addEventListener("click", () => {
-        if(aguardandoDesafio) {
-            aguardandoDesafio = false;
-            challengeModal.classList.add("hidden");
-            resolverJogadaIA(cartaDeclaradaAtual, false);
-        }
-    });
-});
 
     // Configurar botões de desafio (Apenas usados quando a IA joga)
     if(challengeYesBtn) challengeYesBtn.addEventListener("click", () => {
@@ -367,28 +347,19 @@ function executarPoderJogador(carta){
 }
 
 function aplicarEfeitoAtaqueJogador(tipoAtaque) {
-
     if(tipoAtaque === "Cavaleiro") {
         ia.vida--;
         log("⚔️ Cavaleiro causou 1 de dano.");
     }
 
     if(tipoAtaque === "Assassino") {
-
         if(ia.cartas.length > 0){
-
-            let indice = Math.floor(
-                Math.random() * ia.cartas.length
-            );
-
+            let indice = Math.floor(Math.random() * ia.cartas.length);
             let removida = ia.cartas[indice];
-
             ia.perderCarta(indice);
-
             log(`🗡️ Assassino eliminou a carta ${removida}.`);
         }
     }
-
     renderizarTudo();
 }
 
@@ -400,7 +371,6 @@ function usarMago(){
 }
 
 function usarRei(){
-
     const indiceIA = Math.floor(Math.random() * ia.cartas.length);
     
     let cartaJogador = jogador.cartas[cartaSelecionada];
