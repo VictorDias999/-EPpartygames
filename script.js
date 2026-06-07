@@ -62,9 +62,30 @@ class Jogador {
 // ------------------------
 // INICIAR
 // ------------------------
+// ------------------------
+// INICIAR E EVENTOS
+// ------------------------
 window.addEventListener("DOMContentLoaded", () => {
     const startBtn = document.getElementById("startBtn");
     if(startBtn) startBtn.addEventListener("click", iniciarPartida);
+
+    // --- Lógica do Novo Modal: Como Jogar ---
+    const howToPlayBtn = document.getElementById("howToPlayBtn");
+    const rulesModal = document.getElementById("rulesModal");
+    const closeRulesModal = document.getElementById("closeRulesModal");
+
+    if(howToPlayBtn) {
+        howToPlayBtn.addEventListener("click", () => {
+            rulesModal.classList.remove("hidden");
+        });
+    }
+
+    if(closeRulesModal) {
+        closeRulesModal.addEventListener("click", () => {
+            rulesModal.classList.add("hidden");
+        });
+    }
+    // -----------------------------------------
 
     const closeMageBtn = document.getElementById("closeMageModal");
     if(closeMageBtn){
@@ -72,6 +93,23 @@ window.addEventListener("DOMContentLoaded", () => {
             document.getElementById("mageModal").classList.add("hidden");
         });
     }
+
+    // Configurar botões de desafio (Apenas usados quando a IA joga)
+    if(challengeYesBtn) challengeYesBtn.addEventListener("click", () => {
+        if(aguardandoDesafio) {
+            aguardandoDesafio = false;
+            challengeModal.classList.add("hidden");
+            resolverJogadaIA(cartaDeclaradaAtual, true);
+        }
+    });
+    if(challengeNoBtn) challengeNoBtn.addEventListener("click", () => {
+        if(aguardandoDesafio) {
+            aguardandoDesafio = false;
+            challengeModal.classList.add("hidden");
+            resolverJogadaIA(cartaDeclaradaAtual, false);
+        }
+    });
+});
 
     // Configurar botões de desafio (Apenas usados quando a IA joga)
     if(challengeYesBtn) challengeYesBtn.addEventListener("click", () => {
