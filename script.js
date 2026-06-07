@@ -111,9 +111,10 @@ class Jogador {
 
     perderCarta(indice){
 
-        this.cartas.splice(indice,1);
+        if(indice >= 0 && indice < this.cartas.length){
 
-        this.comprarCarta();
+            this.cartas.splice(indice,1);
+        }
     }
 }
 
