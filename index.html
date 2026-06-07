@@ -48,48 +48,52 @@
             </div>
         </header>
 
-        <section class="board-section">
-            <h3>Cartas da IA</h3>
-            <div id="aiCards" class="cards-container">
-                <div class="card back-card"></div>
-                <div class="card back-card"></div>
-            </div>
-        </section>
+        <div class="game-main">
+            <div class="game-left">
+                <section class="board-section">
+                    <h3>Cartas da IA</h3>
+                    <div id="aiCards" class="cards-container">
+                        <div class="card back-card"></div>
+                        <div class="card back-card"></div>
+                    </div>
+                </section>
 
-        <section class="battlefield">
-            <div id="battleMessage">
-                A batalha pelo trono começou.
-            </div>
-        </section>
+                <section class="battlefield">
+                    <div id="battleMessage">
+                        A batalha pelo trono começou.
+                    </div>
+                </section>
 
-        <section class="board-section">
-            <h3>Suas Cartas</h3>
-            <div id="playerCards" class="cards-container">
-            </div>
-        </section>
+                <section class="board-section">
+                    <h3>Suas Cartas</h3>
+                    <div id="playerCards" class="cards-container">
+                    </div>
+                </section>
 
-        <section class="actions-panel">
-            <h3>Ações de Cartas (Podem ser Desafiadas)</h3>
-            <div class="actions-grid" style="margin-bottom: 20px;">
-                <button class="action-btn" data-card="Cavaleiro">⚔️ Cavaleiro (🪙 3)</button>
-                <button class="action-btn" data-card="Mago">🧙 Mago (🪙 4)</button>
-                <button class="action-btn" data-card="Rei">👑 Rei (🪙 3)</button>
-                <button class="action-btn" data-card="Assassino">🗡️ Assassino (🪙 4)</button>
-                <button class="action-btn" data-card="Comerciante">💰 Comerciante (🪙 0)</button>
+                <section class="actions-panel">
+                    <h3>Ações de Cartas (Podem ser Desafiadas)</h3>
+                    <div class="actions-grid" style="margin-bottom: 6px;">
+                        <button class="action-btn" data-card="Cavaleiro">⚔️ Cavaleiro (🪙 3)</button>
+                        <button class="action-btn" data-card="Mago">🧙 Mago (🪙 4)</button>
+                        <button class="action-btn" data-card="Rei">👑 Rei (🪙 3)</button>
+                        <button class="action-btn" data-card="Assassino">🗡️ Assassino (🪙 4)</button>
+                        <button class="action-btn" data-card="Comerciante">💰 Comerciante (🪙 0)</button>
+                    </div>
+
+                    <h3>Ações Universais (Inabaláveis / Sem Blefe)</h3>
+                    <div class="actions-grid">
+                        <button class="action-btn universal-btn" data-universal="Taxar">🪙 Coletar Taxa (🪙 +1)</button>
+                        <button class="action-btn universal-btn" data-universal="Golpe">💥 Golpe Supremo (🪙 7)</button>
+                    </div>
+                </section>
             </div>
 
-            <h3>Ações Universais (Inabaláveis / Sem Blefe)</h3>
-            <div class="actions-grid">
-                <button class="action-btn universal-btn" data-universal="Taxar">🪙 Coletar Taxa (🪙 +1)</button>
-                <button class="action-btn universal-btn" data-universal="Golpe">💥 Golpe Supremo (🪙 7)</button>
-            </div>
-        </section>
-
-        <section class="log-panel">
-            <h3>Registro da Partida</h3>
-            <div id="gameLog">
-            </div>
-        </section>
+            <section class="log-panel">
+                <h3>Registro da Partida</h3>
+                <div id="gameLog">
+                </div>
+            </section>
+        </div>
 
     </section>
 
